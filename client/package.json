@@ -1,0 +1,124 @@
+{
+  "name": "extension-javascript-template",
+  "version": "0.0.1",
+  "description": "Bootstrapped Looker Extension with React and Javascript",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "analyze": "set ANALYZE_MODE=static && yarn build",
+    "build": "set BABEL_ENV=build && webpack --config webpack.prod.js",
+    "clean": "rm -rf dist",
+    "dev": "webpack serve --hot --port 8080 --disable-host-check --config webpack.develop.js",
+    "prebuild": "yarn clean"
+  },
+  "author": "yournamehere",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=12"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@looker/components": "^3.0.8",
+    "@looker/components-data": "^0.1.7",
+    "@looker/components-providers": "^1.5.26",
+    "@looker/embed-sdk": "^1.6.1",
+    "@looker/extension-sdk": "^21.18.1",
+    "@looker/extension-sdk-react": "^21.18.1",
+    "@looker/filter-components": "^0.10.22",
+    "@looker/icons": "^1.5.9",
+    "@looker/sdk": "^22.20.1",
+    "@looker/sdk-node": "^22.20.0",
+    "@looker/sdk-rtl": "^21.4.0",
+    "@looker/visualizations": "^1.0.0",
+    "@mui/material": "^5.11.0",
+    "@styled-icons/material": "10.34.0",
+    "@styled-icons/material-outlined": "10.34.0",
+    "@styled-icons/material-rounded": "10.34.0",
+    "animate.css": "^4.1.1",
+    "animate.css-react": "^1.1.0",
+    "aos": "^2.3.4",
+    "axios": "^1.6.5",
+    "bootstrap": "^5.2.3",
+    "express": "^4.18.2",
+    "framer-motion": "^10.16.4",
+    "jquery": "^3.7.0",
+    "lodash": "^4.17.21",
+    "looker-extension-sdk": "^21.4.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "moment": "^2.30.1",
+    "node-fetch": "^3.3.2",
+    "react": "^18.2.0",
+    "react-animate-height": "^3.1.1",
+    "react-animate.css": "^0.0.4",
+    "react-bootstrap": "^2.7.4",
+    "react-copy-to-clipboard": "^5.1.0",
+    "react-datepicker": "^4.16.0",
+    "react-dom": "^18.2.0",
+    "react-is": "^16.13.1",
+    "react-parallax-tilt": "^1.7.174",
+    "react-redux": "^8.0.2",
+    "react-router-dom": "^5.3.0",
+    "react-type-animation": "^3.2.0",
+    "react-typing-effect": "^2.0.5",
+    "react-typing-text-effect": "^1.0.2",
+    "styled-components": "^5.3.6",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.16.0",
+    "@babel/plugin-transform-react-jsx": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-react": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
+    "@babel/runtime": "^7.16.0",
+    "@types/lodash": "^4.14.184",
+    "@types/react": "^18.0.19",
+    "@types/react-dom": "^18.0.6",
+    "@types/readable-stream": "^2.3.14",
+    "@types/request": "^2.48.8",
+    "@types/request-promise-native": "^1.0.18",
+    "@types/styled-components": "^5.1.26",
+    "babel-loader": "^8.2.3",
+    "babel-preset-nano-react-app": "^0.1.0",
+    "css-loader": "^6.8.1",
+    "dotenv": "^8.2.0",
+    "react-hot-loader": "^4.12.20",
+    "sass": "^1.62.1",
+    "sass-loader": "^13.3.1",
+    "style-loader": "^3.3.3",
+    "svg-inline-loader": "^0.8.2",
+    "webpack": "^5.84.1",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "babel": {
+    "presets": [
+      "nano-react-app"
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-private-property-in-object",
+        {
+          "loose": true
+        }
+      ],
+      [
+        "@babel/plugin-transform-react-jsx",
+        {
+          "pragmaFrag": "React.Fragment"
+        }
+      ]
+    ]
+  }
+}
