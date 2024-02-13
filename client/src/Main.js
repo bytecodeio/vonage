@@ -57,7 +57,7 @@ export const Main = ({ inputValue, setInputValue, url, questions, setQuestions }
     <>
 
       <NavbarMain />
-      <Container fluid className="mt-50 padding-0">
+      <Container fluid className="padding-0 lavender">
         <Template1
           inputValue={inputValue}
           setInputValue={setInputValue}
