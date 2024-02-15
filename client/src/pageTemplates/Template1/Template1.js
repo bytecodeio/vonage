@@ -25,6 +25,8 @@ import SwitchExplore from "../../components/nav/SwitchExplore.js";
 import { createQuestion, getChatHistory, updateFeedback } from "../../services/writebackService.js";
 import {v4 as uuidv4} from 'uuid'
 
+import moment from "moment";
+
 const CustomTable = ({
     data,
     cols,
@@ -118,7 +120,7 @@ const filteredList = (users1, last, search) => {
             </th>
             <th>
               {" "}
-              <h6>SCHEDULED TIMES</h6>
+              <h6>NEXT RUN</h6>
             </th>
             <th>
               {" "}
@@ -174,14 +176,61 @@ const filteredList = (users1, last, search) => {
              <td><a class="white" href={`https://looker.bytecode.io/admin/users/${row.user.id}/edit`}  target="_blank">{row.user.display_name}</a></td>
 
 
+               {
+                 row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' &&  row.scheduled_plan_destination[0].type === 'email' ? (
 
 
-             <td>{row.scheduled_plan_destination[0].format}</td>
+                  <td>PDF attachment via Email</td>
+
+                ) :
+                   row.scheduled_plan_destination[0].format == 'csv' &&  row.scheduled_plan_destination[0].type === 's3' ? (
+
+
+                     <td>CSV file via Amazon S3</td>
+                   ) :
+
+
+                  row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' &&  row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
+
+                     <td>PDF file via Slack</td>
+                   ) :
+
+                    row.scheduled_plan_destination[0].format == 'csv_zip' &&  row.scheduled_plan_destination[0].type === 'email' ? (
+
+                       <td>CSV ZIP file attachment via Email</td>
+
+                     ) :
+
+                   row.scheduled_plan_destination[0].format == 'inline_table' &&  row.scheduled_plan_destination[0].type === 'email' ? (
+
+                          <td>Data Table via Email</td>
+
+                     ) : row.scheduled_plan_destination[0].format == 'csv_zip' &&  row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
+
+                      <td>CSV ZIP file file via Slack</td>
+
+                    ) : row.scheduled_plan_destination[0].format == 'csv_zip' &&  row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
+
+                     <td>CSV ZIP file file via Google Drive</td>
+
+                   ) : row.scheduled_plan_destination[0].format == 'wysiwyg_png' &&  row.scheduled_plan_destination[0].type === 'email' ? (
+
+                    <td>Visualization attachment via Email</td>
+
+                  ) : row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' &&  row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
+
+                   <td>PDF file via Google Drive</td>
 
 
 
+                     )  : (
 
-              <td>{row.next_run_at}</td>
+                        <td>Other</td>
+                     )
+                 }
+
+
+              <td>{moment(row.next_run_at).utc().format('YYYY-MM-DD')}</td>
 
               <td>{row.scheduled_plan_destination[0].address}</td>
 
