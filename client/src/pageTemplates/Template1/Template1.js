@@ -41,7 +41,7 @@ const [last, setLast] = useState(null);
 
 useEffect(() => {
   getUsers(data);
-}, []);
+}, [data]);
 
 //Simulating making api call with useEffect
 const getUsers = data => {
@@ -246,8 +246,8 @@ const filteredList = (users1, last, search) => {
 function Template1 ( { description } ) {
   const extensionContext = useContext(ExtensionContext);
   const sdk = extensionContext.core40SDK;
+  const extensionSDK = extensionContext.extensionSDK;
   const { hostUrl } = extensionContext.extensionSDK.lookerHostData;
-
   const [apps, setApps] = useState([]);
   const [allApps, setAllApps] = useState([]);
   const [selectedButton, setSelectedButton] = useState("grid");
@@ -262,7 +262,6 @@ function Template1 ( { description } ) {
   const [selectedRow, setSelectedRow] = useState();
   const [search, setSearch] = useState(null);
   const [status, setStatus] = useState(undefined);
-  const [disabled, setDisabled] = useState(false);
 
   const [formData, setFormData] = useState({
     scheduleName:"",
@@ -274,6 +273,9 @@ function Template1 ( { description } ) {
     enabled: false,
   });
 
+  const isAllEnabled = data?.data && data.data?.every((row) => row.enabled === true);
+  const isAnyEnabled = data?.data && data.data?.some((row) => row.enabled === true);
+
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -282,14 +284,15 @@ function Template1 ( { description } ) {
   };
 
 
-  const handleDisabled = (event) => {
-    // selectedRow.enabled
-    console.log('checked', formData.enabled);
+  const handleDisabled = () => {
     setFormData({
       ...formData,
       enabled: !formData.enabled,
     });
-    setDisabled(true)
+    setSelectedRow({
+      ...selectedRow,
+      enabled: !formData.enabled,
+    });
  };
 
   useEffect(() => {
@@ -308,9 +311,7 @@ function Template1 ( { description } ) {
   }, [selectedRow]);
 
 
-
-
-  const handleUpdate = async () => {
+  const handleUpdate = async (extensionContext) => {
     let response = await sdk.ok(
       sdk.update_scheduled_plan(
         selectedRow?.scheduled_plan_destination[0].scheduled_plan_id,
@@ -341,28 +342,39 @@ function Template1 ( { description } ) {
     if (response) {
       console.log(response, "response");
 
+      const usersContextData = extensionSDK.getContextData() || null;
+      const newData = usersContextData.data.map((row) => {
+        if (row.id === selectedRow.id) {
+          return {
+            ...selectedRow,
+          };
+        }
+        return row;
+      });
+      extensionSDK.saveContextData({ data: newData, cols: usersContextData.cols });
+      setData({ data: newData, cols: usersContextData.cols });
+
       setStatus({ type: 'success' });
 
       handleClose();
 
-     setTimeout(() => {
-      setStatus(undefined);
-     }, 5000);
+      setTimeout(() => {
+        setStatus(undefined);
+      }, 5000);
     }
-    else{
+    else {
 
       setStatus({ type: 'error', error });
 
       setTimeout(() => {
-       setStatus(undefined);
+        setStatus(undefined);
       }, 5000);
 
     }
   };
 
+
   useEffect(() => {
-    // const getInfo = () => {
-    //   return sdk
     sdk
       .ok(
         sdk.all_scheduled_plans({
@@ -373,26 +385,47 @@ function Template1 ( { description } ) {
 
         console.log(res, "All of scheduler info");
 
-        const cols = Object.keys(res[0]).map((i) => i);
-        setData({ data: res, cols });
-        // console.log(res, "All of scheduler info");
-        //     return {
-        //       ...res,
-        //     };
-        //   })
+        const usersContextData = extensionSDK.getContextData() || null;
 
-        // .catch(() => ({}));
+        // SAVE DATA IN EXTENSION USERS CONTEXT IF NOT ALREADY SAVED
+        if (!usersContextData) {
+          const cols = Object.keys(res[0]).map((i) => i);
+          extensionSDK.saveContextData({ data: res, cols });
+          setData({ data: res, cols });
+        } else {
+          // CHECK IF DATA LENGTH HAS CHANGED AND PREVIOUS DATA IS LESS THAN NEW DATA LENGTH SO THAT WE CAN UPDATE EXTENSION USERS CONTEXT WITH NEW DATA
+          if (usersContextData?.data?.length !== res?.length && usersContextData?.data?.length < res?.length) {
+            const cols = Object.keys(res[0]).map((i) => i);
+            extensionSDK.saveContextData({ data: res, cols });
+            setData({ data: res, cols });
+          }
+          // IF DATA LENGTH HAS NOT CHANGED THEN WE CAN USE THE DATA FROM EXTENSION USERS CONTEXT
+          else {
+            setData(usersContextData);
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
       });
-
-    // getInfo()
   }, []);
 
 //search
 
+  const handleTogglePauseAll = async () => {
+    const updatedUsers = await Promise.all(
+      data.data.map(async (row) => {
+        return sdk.ok(sdk.update_scheduled_plan(row.scheduled_plan_destination[0].scheduled_plan_id, { enabled: !isAllEnabled }));
+      })
+    )
+    const usersContextData = extensionSDK.getContextData() || null;
 
+    if (usersContextData && updatedUsers && updatedUsers.length > 0) {
+        extensionSDK.saveContextData({ data: updatedUsers, cols: data.cols });
+        setData({ data: updatedUsers, cols: data.cols });
+    }
+    setSelectedRow(null);
+  };
 
   return (
     <Fragment>
@@ -411,24 +444,36 @@ function Template1 ( { description } ) {
             <div class="bg-black blackBG">
               <div class="row align-items-center mb-5">
                 <div
-                  class="col-lg-6 text-center text-lg-start aos-init aos-animate"
+                  class="col-lg-5 text-center text-lg-start aos-init aos-animate"
                   data-aos="fade-right"
                 >
                   <h3 class="pe-xxl-5 md-pb-20">Scheduled Reports</h3>
                 </div>
+
                 <div
-                  class="col-lg-6 text-center text-lg-end aos-init aos-animate"
+                  class="col-lg-4 text-center text-lg-end aos-init aos-animate"
                   data-aos="fade-left"
                 >
                   {/*<a class="msg-btn tran3s">
                     new scheduled report
                   </a>*/}
                   <div className="position-relative">
-                    <input onChange={e => setSearch(e.target.value)} placeholder="Search Report Name, First Name, or Last Name" type="search" class="form-control" />
+                    <input onChange={e => setSearch(e.target.value)} placeholder="Search Report Name or Last Name" type="search" class="form-control" />
                     <i class="far fa-search absoluteSearch"></i>
                   </div>
 
                 </div>
+
+                <div
+                  class="col-lg-3 all">
+                <Form.Check
+                  onClick={handleTogglePauseAll}
+                  checked={!isAnyEnabled}
+                  type="switch"
+                  id="custom-switch"
+                  label="PAUSE ALL SCHEDULES"
+                />
+              </div>
               </div>
 
               <div className="dashboard-content">
@@ -530,10 +575,14 @@ function Template1 ( { description } ) {
                       <Col xs={12} md={3}>
                       <Form.Check
                         onClick={handleDisabled}
-                        checked={formData.enabled}
+                        disabled={!isAnyEnabled ? true : false}
+                        checked={!selectedRow?.enabled}
                         type="switch"
                         id="custom-switch"
                         label="PAUSE REPORT"
+                        style={{
+                          opacity: !isAnyEnabled ? 0.5 : 1,
+                        }}
                       />
                       </Col>
                     </Row>
@@ -546,7 +595,7 @@ function Template1 ( { description } ) {
             <a
               class="btn-eight"
               onClick={() => {
-                handleUpdate();
+                handleUpdate(extensionContext);
               }}
             >
               Save
