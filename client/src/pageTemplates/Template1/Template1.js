@@ -351,8 +351,12 @@ function Template1 ( { description } ) {
         }
         return row;
       });
+
+
       extensionSDK.saveContextData({ data: newData, cols: usersContextData.cols });
       setData({ data: newData, cols: usersContextData.cols });
+
+
 
       setStatus({ type: 'success' });
 
@@ -385,22 +389,32 @@ function Template1 ( { description } ) {
 
         console.log(res, "All of scheduler info");
 
+        console.log(res?.length, "new schedules added")
+
+        console.log(usersContextData?.data?.length, "conttext data length")
+
         const usersContextData = extensionSDK.getContextData() || null;
 
         // SAVE DATA IN EXTENSION USERS CONTEXT IF NOT ALREADY SAVED
-        if (!usersContextData) {
+        if (!usersContextData && res?.length > 1) {
+
+          console.log("no context data")
           const cols = Object.keys(res[0]).map((i) => i);
           extensionSDK.saveContextData({ data: res, cols });
           setData({ data: res, cols });
         } else {
           // CHECK IF DATA LENGTH HAS CHANGED AND PREVIOUS DATA IS LESS THAN NEW DATA LENGTH SO THAT WE CAN UPDATE EXTENSION USERS CONTEXT WITH NEW DATA
           if (usersContextData?.data?.length !== res?.length && usersContextData?.data?.length < res?.length) {
+
+            console.log("repsonse has changed length")
             const cols = Object.keys(res[0]).map((i) => i);
             extensionSDK.saveContextData({ data: res, cols });
             setData({ data: res, cols });
           }
           // IF DATA LENGTH HAS NOT CHANGED THEN WE CAN USE THE DATA FROM EXTENSION USERS CONTEXT
           else {
+            console.log("no change in length, use context")
+
             setData(usersContextData);
           }
         }
