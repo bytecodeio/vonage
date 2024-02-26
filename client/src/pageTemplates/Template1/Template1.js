@@ -387,21 +387,37 @@ function Template1 ( { description } ) {
       )
       .then((res) => {
 
+
+
+        const usersContextData = extensionSDK.getContextData() || null;
+
+
         console.log(res, "All of scheduler info");
 
         console.log(res?.length, "new schedules added")
 
-        console.log(usersContextData?.data?.length, "conttext data length")
+        console.log(usersContextData?.data?.length, "context data length")
 
-        const usersContextData = extensionSDK.getContextData() || null;
 
+        if (res?.length === 0) {
+        console.log("there are no schedules");
+
+        const cols = Object.keys(res[0]).map((i) => i);
+        setData({ data: res, cols });
+        }
         // SAVE DATA IN EXTENSION USERS CONTEXT IF NOT ALREADY SAVED
+
         if (!usersContextData && res?.length > 1) {
 
           console.log("no context data")
           const cols = Object.keys(res[0]).map((i) => i);
           extensionSDK.saveContextData({ data: res, cols });
           setData({ data: res, cols });
+
+          // const cols = Object.keys(res[0]).map((i) => i);
+          // setData({ data: res, cols });
+
+
         } else {
           // CHECK IF DATA LENGTH HAS CHANGED AND PREVIOUS DATA IS LESS THAN NEW DATA LENGTH SO THAT WE CAN UPDATE EXTENSION USERS CONTEXT WITH NEW DATA
           if (usersContextData?.data?.length !== res?.length && usersContextData?.data?.length < res?.length) {
@@ -411,10 +427,19 @@ function Template1 ( { description } ) {
             extensionSDK.saveContextData({ data: res, cols });
             setData({ data: res, cols });
           }
+
+          if (usersContextData?.data?.length < res?.length) {
+
+            console.log("there is more new than saved context")
+            const cols = Object.keys(res[0]).map((i) => i);
+            setData({ data: res, cols });
+          }
+
           // IF DATA LENGTH HAS NOT CHANGED THEN WE CAN USE THE DATA FROM EXTENSION USERS CONTEXT
           else {
             console.log("no change in length, use context")
-
+            // const cols = Object.keys(res[0]).map((i) => i);
+            // setData({ data: res, cols });
             setData(usersContextData);
           }
         }
@@ -530,7 +555,7 @@ function Template1 ( { description } ) {
 
 
                       <Col xs={12} md={6}>
-                        <Form.Group controlId="">
+                        <Form.Group controlId="" class="grayBorder">
                           <Form.Label>SCHEDULER FIRST NAME</Form.Label>
                           <Form.Control
                             onChange={handleChange}
@@ -541,7 +566,7 @@ function Template1 ( { description } ) {
                       </Col>
 
                       <Col xs={12} md={6}>
-                        <Form.Group controlId="">
+                        <Form.Group controlId="" class="grayBorder">
                           <Form.Label>SCHEDULER LAST NAME</Form.Label>
                           <Form.Control
                             onChange={handleChange}
@@ -563,7 +588,7 @@ function Template1 ( { description } ) {
                       </Col>
 
                       <Col xs={12} md={6}>
-                        <Form.Group controlId="">
+                        <Form.Group controlId="" class="grayBorder">
                           <Form.Label>SCHEDULE NAME</Form.Label>
                           <Form.Control
                             onChange={handleChange}
