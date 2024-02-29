@@ -16,9 +16,13 @@ body, html{
 
 }
 
+.paused{
+  color:#ff3333
+}
+
 .form-switch{
 margin-top: 2em;
-margin-left: 2em;
+margin-left: 2.5em;
 font-size: 18px;
 
 }
@@ -1118,7 +1122,9 @@ max-height: 44px;
 
 }
 
-
+.red {
+    color: red;
+}
 
 .form-select,
 .dropdown-toggle {
