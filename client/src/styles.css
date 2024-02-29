@@ -16,9 +16,13 @@ body, html{
 
 }
 
+.paused{
+  color:#ff3333
+}
+
 .form-switch{
 margin-top: 2em;
-margin-left: 2em;
+margin-left: 2.5em;
 font-size: 18px;
 
 }
@@ -973,7 +977,7 @@ right: -15px;
 .fancy-short-banner-five h3 {
     color: #fff;
 
-    font-size: 44px;
+    font-size: 40px;
     line-height: 1.25em;
     margin: 0;
 }
@@ -1086,6 +1090,15 @@ width: 100%;
     margin-bottom: 0em
 }
 
+.all .form-switch {
+    margin-top: 0.5em;
+    margin-left: 0em;
+    font-size: 17px;
+}
+.all .form-switch .form-check-input{
+  margin-left:0em
+}
+
 
 .grayBorder .form-control {
   border: 1px solid #efefef;
@@ -1109,7 +1122,9 @@ max-height: 44px;
 
 }
 
-
+.red {
+    color: red;
+}
 
 .form-select,
 .dropdown-toggle {

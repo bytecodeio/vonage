@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useContext, useEffect, useRef } from "react";
-import { Accordion, AccordionButton, AccordionCollapse, AccordionContext, Alert, Anchor, Badge, Breadcrumb, BreadcrumbItem, Button, ButtonGroup, ButtonToolbar, Card, CardGroup, CardImg, Carousel, CarouselItem, CloseButton, Col, Collapse, Container, Dropdown, DropdownButton, Fade, Figure, FloatingLabel, Form, FormCheck, FormControl, FormFloating, FormGroup, FormLabel, FormSelect, FormText, Image, InputGroup, ListGroup, ListGroupItem, Modal, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle, Nav, NavDropdown, NavItem, NavLink, Navbar, NavbarBrand, Offcanvas, OffcanvasBody, OffcanvasHeader, OffcanvasTitle, Overlay, OverlayTrigger, PageItem, Pagination, Placeholder, PlaceholderButton, Popover, PopoverBody, PopoverHeader, ProgressBar, Ratio, Row, SSRProvider, SplitButton, Stack, Tab, TabContainer, TabContent, TabPane, Table, Tabs, ThemeProvider, Toast, ToastBody, ToastContainer, ToastHeader, ToggleButton, ToggleButtonGroup, Tooltip} from 'react-bootstrap';
+import { Accordion, AccordionButton, AccordionCollapse, AccordionContext, Alert, Anchor, Badge, Breadcrumb, BreadcrumbItem, Button, ButtonGroup, ButtonToolbar, Card, CardGroup, CardImg, Carousel, CarouselItem, CloseButton, Col, Collapse, Container, Dropdown, DropdownButton, Fade, Figure, FloatingLabel, Form, FormCheck, FormControl, FormFloating, FormGroup, FormLabel, FormSelect, FormText, Image, InputGroup, ListGroup, ListGroupItem, Modal, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle, Nav, NavDropdown, NavItem, NavLink, Navbar, NavbarBrand, Offcanvas, OffcanvasBody, OffcanvasHeader, OffcanvasTitle, Overlay, OverlayTrigger, PageItem, Pagination, Placeholder, PlaceholderButton, Popover, PopoverBody, PopoverHeader, ProgressBar, Ratio, Row, SSRProvider, Spinner, SplitButton, Stack, Tab, TabContainer, TabContent, TabPane, Table, Tabs, ThemeProvider, Toast, ToastBody, ToastContainer, ToastHeader, ToggleButton, ToggleButtonGroup, Tooltip } from 'react-bootstrap';
 import TimePicker from 'react-bootstrap-time-picker';
 
 import AOS from 'aos';
@@ -21,7 +21,7 @@ import TopNav from "../../components/nav/TopNav.js";
 import SideForm from "../../components/nav/Form.js";
 import SwitchExplore from "../../components/nav/SwitchExplore.js";
 import { createQuestion, getChatHistory, updateFeedback } from "../../services/writebackService.js";
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 
 import moment from "moment";
 
@@ -33,43 +33,51 @@ const CustomTable = ({
   setSelectedRow,
   search,
   setSearch,
+  loading
 }) => {
+
   const [users1, setUsers1] = useState([]);
   const [last, setLast] = useState(null);
 
+
   useEffect(() => {
     getUsers(data);
-  }, []);
+  }, [data]);
+
+  const isAllDisabled = data?.data && data.data?.every((row) => row.enabled === false);
 
   //Simulating making api call with useEffect
-  const getUsers = (data) => {
+  const getUsers = data => {
     setUsers1(data);
   };
 
   const bylast = (user, last) => {
     if (last) {
       return user.last_name.toLowerCase().includes(search.toLowerCase());
+
     } else return user;
   };
 
+
   const bySearch = (user, search) => {
     if (search) {
-      return (
-        user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.user.last_name.toLowerCase().includes(search.toLowerCase()) ||
-        user.user.first_name.toLowerCase().includes(search.toLowerCase())
-      );
+      return user.name.toLowerCase().includes(search.toLowerCase()) || user.user.last_name.toLowerCase().includes(search.toLowerCase()) ||
+        user.user.first_name.toLowerCase().includes(search.toLowerCase());
+
     } else return user;
   };
 
   const filteredList = (users1, last, search) => {
     return users1
-      .filter((user) => bylast(user, last))
-      .filter((user) => bySearch(user, search));
+      .filter(user => bylast(user, last))
+      .filter(user => bySearch(user, search));
   };
+
+
 
   return (
     <Fragment>
+
       <Table className="mt-5 mb-5 pt-5 thisTable">
         <thead>
           <tr>
@@ -111,6 +119,8 @@ const CustomTable = ({
               <h6>MESSAGE</h6>
             </th>
 
+
+
             <th>
               {" "}
               <h6>EDIT</h6>
@@ -119,89 +129,82 @@ const CustomTable = ({
         </thead>
 
         <tbody>
+
           {filteredList(users1, last, search).map((row, i) => {
             return (
               <tr key={row.id}>
-                {row.look_id == null && row.custom_url_params === "" ? (
-                  <td>
-                    <a
-                      class="white"
-                      href={`https://looker.bytecode.io/dashboards/${row.dashboard_id}`}
-                      target="_blank"
-                    >
-                      {row.name}
-                    </a>
-                  </td>
-                ) : row.custom_url_params === "" ? (
-                  <td>
-                    <a
-                      class="white"
-                      href={`https://looker.bytecode.io/looks/${row.look_id}`}
-                      target="_blank"
-                    >
-                      {row.name}
-                    </a>
-                  </td>
-                ) : (
-                  <td>
-                    <a
-                      class="white"
-                      href={`https://looker.bytecode.io${row.custom_url_params}`}
-                      target="_blank"
-                    >
-                      {row.name}
-                    </a>
-                  </td>
-                )}
+                {
+                  row.look_id == null && row.custom_url_params === '' ? (
+
+                    <td><a class="white" href={`https://looker.bytecode.io/dashboards/${row.dashboard_id}`} target="_blank">{row.name}</a></td>
+                  )
+                    :
+                    row.custom_url_params === '' ? (
+
+                      <td><a class="white" href={`https://looker.bytecode.io/looks/${row.look_id}`} target="_blank">{row.name}</a></td>
+                    ) : (
+
+                      <td><a class="white" href={`https://looker.bytecode.io${row.custom_url_params}`} target="_blank">{row.name}</a></td>
+                    )
+                }
 
                 <td>{row.user.first_name}</td>
                 <td>{row.user.last_name}</td>
 
-                <td>
-                  <a
-                    class="white"
-                    href={`https://looker.bytecode.io/admin/users/${row.user.id}/edit`}
-                    target="_blank"
-                  >
-                    {row.user.display_name}
-                  </a>
-                </td>
+                <td><a class="white" href={`https://looker.bytecode.io/admin/users/${row.user.id}/edit`} target="_blank">{row.user.display_name}</a></td>
 
-                {row.scheduled_plan_destination[0].format == "wysiwyg_pdf" &&
-                row.scheduled_plan_destination[0].type === "email" ? (
-                  <td>PDF attachment via Email</td>
-                ) : row.scheduled_plan_destination[0].format == "csv" &&
-                  row.scheduled_plan_destination[0].type === "s3" ? (
-                  <td>CSV file via Amazon S3</td>
-                ) : row.scheduled_plan_destination[0].format == "wysiwyg_pdf" &&
-                  row.scheduled_plan_destination[0].type ===
-                    "looker-integration://1::slack_app" ? (
-                  <td>PDF file via Slack</td>
-                ) : row.scheduled_plan_destination[0].format == "csv_zip" &&
-                  row.scheduled_plan_destination[0].type === "email" ? (
-                  <td>CSV ZIP file attachment via Email</td>
-                ) : row.scheduled_plan_destination[0].format ==
-                    "inline_table" &&
-                  row.scheduled_plan_destination[0].type === "email" ? (
-                  <td>Data Table via Email</td>
-                ) : row.scheduled_plan_destination[0].format == "csv_zip" &&
-                  row.scheduled_plan_destination[0].type ===
-                    "looker-integration://1::slack_app" ? (
-                  <td>CSV ZIP file file via Slack</td>
-                ) : row.scheduled_plan_destination[0].format == "csv_zip" &&
-                  row.scheduled_plan_destination[0].type ===
-                    "looker-integration://1::google_drive" ? (
-                  <td>CSV ZIP file file via Google Drive</td>
-                ) : row.scheduled_plan_destination[0].format == "wysiwyg_png" &&
-                  row.scheduled_plan_destination[0].type === "email" ? (
-                  <td>Visualization attachment via Email</td>
-                ) : row.scheduled_plan_destination[0].format == "wysiwyg_pdf" &&
-                  row.scheduled_plan_destination[0].type ===
-                    "looker-integration://1::google_drive" ? (
-                  <td>PDF file via Google Drive</td>
-                ) : (
-                  <td>Other</td>
-                )}
+                {
+                  row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'email' ? (
+
+
+                    <td>PDF attachment via Email</td>
+
+                  ) :
+                    row.scheduled_plan_destination[0].format == 'csv' && row.scheduled_plan_destination[0].type === 's3' ? (
+
+
+                      <td>CSV file via Amazon S3</td>
+                    ) :
+
+
+                      row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
+
+                        <td>PDF file via Slack</td>
+                      ) :
+
+                        row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'email' ? (
+
+                          <td>CSV ZIP file attachment via Email</td>
+
+                        ) :
+
+                          row.scheduled_plan_destination[0].format == 'inline_table' && row.scheduled_plan_destination[0].type === 'email' ? (
+
+                            <td>Data Table via Email</td>
+
+                          ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
+
+                            <td>CSV ZIP file file via Slack</td>
+
+                          ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
+
+                            <td>CSV ZIP file file via Google Drive</td>
+
+                          ) : row.scheduled_plan_destination[0].format == 'wysiwyg_png' && row.scheduled_plan_destination[0].type === 'email' ? (
+
+                            <td>Visualization attachment via Email</td>
+
+                          ) : row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
+
+                            <td>PDF file via Google Drive</td>
+
+
+                          ) : (
+
+                            <td>Other</td>
+                          )
+                }
+
 
                 {/*<td>{moment(row.next_run_at).utc().format('YYYY-MM-DD')}</td>*/}
 
@@ -209,8 +212,14 @@ const CustomTable = ({
 
                 {/*<td><a class="white" href={`https://looker.bytecode.io/admin/scheduled_jobs?scheduled_plan_id=${row.scheduled_plan_destination[0].scheduled_plan_id}`} target="_blank">History</a></td>*/}
 
-                <td>{row.scheduled_plan_destination[0].message}</td>
-
+                {/* <td>{row.scheduled_plan_destination[0].message}</td> */}
+                <td>{
+                  !row.enabled || isAllDisabled ? (
+                    <p class="paused">Schedule is Paused</p>
+                  ) : (
+                    <p class="active">Schedule is Active</p>
+                  )
+                }</td>
                 <td>
                   <p>
                     <i
@@ -220,14 +229,14 @@ const CustomTable = ({
                         setSelectedRow(row);
                         console.log(row, "row");
                       }}
-                      // onClick={() => {
-                      //   handleShow;
-                      //   console.log(
-                      //     row,
-                      //     "row"
-                      //     // row.scheduled_plan_destination[0].scheduled_plan_id
-                      //   );
-                      // }}
+                    // onClick={() => {
+                    //   handleShow;
+                    //   console.log(
+                    //     row,
+                    //     "row"
+                    //     // row.scheduled_plan_destination[0].scheduled_plan_id
+                    //   );
+                    // }}
                     ></i>
                   </p>
                 </td>
@@ -235,21 +244,23 @@ const CustomTable = ({
             );
           })}
         </tbody>
+
       </Table>
     </Fragment>
   );
 };
 
+
 function Template1({ description }) {
   const extensionContext = useContext(ExtensionContext);
   const sdk = extensionContext.core40SDK;
+  const extensionSDK = extensionContext.extensionSDK;
   const { hostUrl } = extensionContext.extensionSDK.lookerHostData;
-
   const [apps, setApps] = useState([]);
   const [allApps, setAllApps] = useState([]);
   const [selectedButton, setSelectedButton] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const [slide, setSlide] = React.useState();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -259,7 +270,6 @@ function Template1({ description }) {
   const [selectedRow, setSelectedRow] = useState();
   const [search, setSearch] = useState(null);
   const [status, setStatus] = useState(undefined);
-  const [disabled, setDisabled] = useState(false);
 
   const [formData, setFormData] = useState({
     scheduleName: "",
@@ -269,8 +279,10 @@ function Template1({ description }) {
     address: "",
     message: "",
     enabled: false,
-    crontab: "",
   });
+
+  const isAllEnabled = data?.data && data.data?.every((row) => row.enabled === true);
+  const isAnyEnabled = data?.data && data.data?.some((row) => row.enabled === true);
 
   const handleChange = (event) => {
     setFormData({
@@ -279,16 +291,20 @@ function Template1({ description }) {
     });
   };
 
-  const handleDisabled = (event) => {
+
+  const handleDisabled = () => {
     setFormData({
       ...formData,
-      crontab:
-        formData.crontab === "0 6 1 * *" ? "*/5 0-22 * * *" : "0 6 1 * *",
+      enabled: !formData.enabled,
     });
-    setDisabled(true);
+    setSelectedRow({
+      ...selectedRow,
+      enabled: !formData.enabled,
+    });
   };
 
   useEffect(() => {
+
     if (selectedRow) {
       setFormData({
         scheduleName: selectedRow.name || "",
@@ -297,64 +313,79 @@ function Template1({ description }) {
         contentType: selectedRow.scheduled_plan_destination[0].format || "",
         address: selectedRow.scheduled_plan_destination[0].address || "",
         message: selectedRow.scheduled_plan_destination[0].message || "",
-        enabled: selectedRow.enabled || false,
-        crontab: selectedRow.crontab,
+        enabled: selectedRow.enabled || false
       });
     }
   }, [selectedRow]);
 
+
   const handleUpdate = async () => {
-    const updatedRow = {
-      ...selectedRow,
-
-      crontab: formData.crontab,
-      scheduled_plan_destination: [
-        {
-          ...selectedRow?.scheduled_plan_destination[0],
-          address: formData.address,
-          message:
-            formData.crontab === "0 6 1 * *"
-              ? "Schedule set to every first of the month"
-              : "",
-        },
-
-      ],
-      user: [
-        {
-          ...selectedRow?.user[0],
-          firstName: formData.first_name,
-        },
-      ]
-    };
-
+    setLoading(true);
     let response = await sdk.ok(
       sdk.update_scheduled_plan(
-        selectedRow?.scheduled_plan_destination[0]?.scheduled_plan_id ||
-        selectedRow?.user[0],
-        updatedRow
+        selectedRow?.scheduled_plan_destination[0].scheduled_plan_id,
+        {
+          ...selectedRow,
+          scheduled_plan_destination: [
+            {
+              ...selectedRow.scheduled_plan_destination[0],
+              address: formData.address,
+              message: formData.message,
+            },
+          ],
+          user: {
+            ...selectedRow.user,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+          },
+
+          enabled: formData.enabled,
+
+          res: {
+            ...selectedRow,
+            scheduleName: formData.scheduleName,
+          },
+        }
       )
     );
 
     if (response) {
       console.log(response, "response");
 
-      setStatus({ type: "success" });
+      const newData = data?.data?.map((row) => {
+        if (row.id === selectedRow.id) {
+          return {
+            ...selectedRow,
+          };
+        }
+        return row;
+      });
+
+      extensionSDK.saveContextData({ data: newData, cols: data.cols });
+      setData({ data: newData, cols: data.cols });
+
+      // setStatus({ type: 'success' });
 
       handleClose();
+      setLoading(false);
+      // setTimeout(() => {
+      //   setStatus(undefined);
+      // }, 5000);
+    }
+    else {
 
-      setTimeout(() => {
-        setStatus(undefined);
-      }, 5000);
-    } else {
-      setStatus({ type: "error", error });
+      // setStatus({ type: 'error', error });
+      setLoading(false);
+      // setTimeout(() => {
+      //   setStatus(undefined);
+      // }, 5000);
 
-      setTimeout(() => {
-        setStatus(undefined);
-      }, 5000);
     }
   };
 
+
   useEffect(() => {
+    setLoading(true);
     sdk
       .ok(
         sdk.all_scheduled_plans({
@@ -362,35 +393,65 @@ function Template1({ description }) {
         })
       )
       .then((res) => {
+
         console.log(res, "All of scheduler info");
 
-        const cols = Object.keys(res[0]).map((i) => i);
-        setData({ data: res, cols });
+        const usersContextData = extensionSDK.getContextData() || null;
+
+        // SAVE DATA IN EXTENSION USERS CONTEXT IF NOT ALREADY SAVED
+        if (!usersContextData) {
+          const cols = Object.keys(res[0]).map((i) => i);
+          extensionSDK.saveContextData({ data: res, cols });
+          setData({ data: res, cols });
+          setLoading(false);
+        } else {
+          // CHECK IF DATA LENGTH HAS CHANGED AND PREVIOUS DATA IS LESS THAN NEW DATA LENGTH SO THAT WE CAN UPDATE EXTENSION USERS CONTEXT WITH NEW DATA
+          if (usersContextData?.data?.length !== res?.length && usersContextData?.data?.length < res?.length) {
+            const cols = Object.keys(res[0]).map((i) => i);
+            extensionSDK.saveContextData({ data: res, cols });
+            setData({ data: res, cols });
+            setLoading(false);
+          }
+          // IF DATA LENGTH HAS NOT CHANGED THEN WE CAN USE THE DATA FROM EXTENSION USERS CONTEXT
+          else {
+            setLoading(false);
+            setData(usersContextData);
+          }
+        }
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
   }, []);
 
   //search
 
+  const handleTogglePauseAll = async () => {
+    setLoading(true);
+    const updatedUsers = await Promise.all(
+      data.data.map(async (row) => {
+        return sdk.ok(sdk.update_scheduled_plan(row.scheduled_plan_destination[0].scheduled_plan_id, { enabled: !isAnyEnabled }));
+      })
+    )
+    const usersContextData = extensionSDK.getContextData() || null;
+
+    if (usersContextData && updatedUsers && updatedUsers.length > 0) {
+      extensionSDK.saveContextData({ data: updatedUsers, cols: data.cols });
+      setData({ data: updatedUsers, cols: data.cols });
+      setLoading(false);
+    }
+    setSelectedRow(null);
+    setLoading(false);
+  };
+
   return (
     <Fragment>
-      {status?.type === "success" && (
-        <div class="successMessage">
-          <p>
-            <i class="far fa-check"></i> Update Saved! Please refresh the app to
-            see your changes.
-          </p>
-        </div>
-      )}
 
-      {status?.type === "error" && (
-        <div class="errorMessage">
-          <p>
-            <i class="fas fa-exclamation-circle redInfo"></i> Update not saved!
-          </p>
-        </div>
+      {status?.type === 'success' && <div class="successMessage"><p><i class="far fa-check"></i> Update Saved! Please refresh the app to see your changes.</p></div>}
+
+      {status?.type === 'error' && (
+        <div class="errorMessage"><p><i class="fas fa-exclamation-circle redInfo"></i> Update not saved!</p></div>
       )}
 
       <Container fluid>
@@ -401,31 +462,49 @@ function Template1({ description }) {
               <div class="bg-black blackBG">
                 <div class="row align-items-center mb-5">
                   <div
-                    class="col-lg-6 text-center text-lg-start aos-init aos-animate"
+                    class="col-lg-5 text-center text-lg-start aos-init aos-animate"
                     data-aos="fade-right"
                   >
                     <h3 class="pe-xxl-5 md-pb-20">Scheduled Reports</h3>
                   </div>
+
                   <div
-                    class="col-lg-6 text-center text-lg-end aos-init aos-animate"
+                    class="col-lg-4 text-center text-lg-end aos-init aos-animate"
                     data-aos="fade-left"
                   >
                     {/*<a class="msg-btn tran3s">
                     new scheduled report
                   </a>*/}
                     <div className="position-relative">
-                      <input
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search Report Name, First Name, or Last Name"
-                        type="search"
-                        class="form-control"
-                      />
+                      <input onChange={e => setSearch(e.target.value)} placeholder="Search Report Name or Last Name" type="search" class="form-control" />
                       <i class="far fa-search absoluteSearch"></i>
                     </div>
+
+                  </div>
+
+                  <div
+                    class="col-lg-3 all">
+                    {
+                      loading ?
+                        (<Spinner animation="border" role="status" />)
+                        :
+                        (<Form.Check
+                          onClick={handleTogglePauseAll}
+                          checked={!isAnyEnabled}
+                          type="switch"
+                          id="custom-switch"
+                          label="PAUSE ALL SCHEDULES"
+                          style={{
+                            cursor: "pointer"
+                          }}
+                        />)
+                    }
                   </div>
                 </div>
 
                 <div className="dashboard-content">
+
+
                   {data.data && (
                     <CustomTable
                       data={data.data}
@@ -435,12 +514,16 @@ function Template1({ description }) {
                       setSelectedRow={setSelectedRow}
                       search={search}
                       setSearch={setSearch}
+
                     />
                   )}
+
                 </div>
               </div>
             </div>
           </Container>
+
+
         </div>
 
         <Modal show={show} onHide={handleClose}>
@@ -457,12 +540,12 @@ function Template1({ description }) {
                       <Row>
                         <h4 class="mb-3">Update Schedules</h4>
 
+
                         <Col xs={12} md={6}>
                           <Form.Group controlId="" class="grayBorder">
                             <Form.Label>SCHEDULER FIRST NAME</Form.Label>
                             <Form.Control
 
-                              onChange={handleChange}
                               value={formData.firstName}
                               name="firstName"
                             />
@@ -474,7 +557,6 @@ function Template1({ description }) {
                             <Form.Label>SCHEDULER LAST NAME</Form.Label>
                             <Form.Control
 
-                              onChange={handleChange}
                               value={formData.lastName}
                               name="lastName"
                             />
@@ -482,10 +564,10 @@ function Template1({ description }) {
                         </Col>
 
                         <Col xs={12} lg={6} md={12}>
-                          <Form.Group controlId="">
+                          <Form.Group controlId="" class="grayBorder">
                             <Form.Label>EMAIL ADDRESS</Form.Label>
                             <Form.Control
-                              onChange={handleChange}
+                            
                               value={formData.address}
                               name="address"
                             />
@@ -497,14 +579,14 @@ function Template1({ description }) {
                             <Form.Label>SCHEDULE NAME</Form.Label>
                             <Form.Control
 
-                              onChange={handleChange}
                               value={formData.scheduleName}
                               name="scheduleName"
                             />
                           </Form.Group>
                         </Col>
 
-                        <Col xs={12} md={9}>
+
+                        {/*<Col xs={12} md={9}>
                           <Form.Group className="mb-3">
                             <Form.Label>Message</Form.Label>
                             <Form.Control
@@ -515,14 +597,18 @@ function Template1({ description }) {
                               value={formData.message}
                             />
                           </Form.Group>
-                        </Col>
+                        </Col>*/}
                         <Col xs={12} md={3}>
                           <Form.Check
                             onClick={handleDisabled}
-                            checked={formData.crontab === "0 6 1 * *" ? true : false}
+                            disabled={!isAnyEnabled ? true : false}
+                            checked={!selectedRow?.enabled}
                             type="switch"
                             id="custom-switch"
                             label="PAUSE REPORT"
+                            style={{
+                              opacity: !isAnyEnabled ? 0.5 : 1,
+                            }}
                           />
                         </Col>
                       </Row>
@@ -547,8 +633,9 @@ function Template1({ description }) {
           </div>
         </Modal>
       </Container>
+
     </Fragment>
   );
-}
+};
 
 export default Template1;
