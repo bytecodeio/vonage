@@ -564,10 +564,10 @@ function Template1({ description }) {
                         </Col>
 
                         <Col xs={12} lg={6} md={12}>
-                          <Form.Group controlId="">
+                          <Form.Group controlId="" class="grayBorder">
                             <Form.Label>EMAIL ADDRESS</Form.Label>
                             <Form.Control
-                              onChange={handleChange}
+                            
                               value={formData.address}
                               name="address"
                             />
