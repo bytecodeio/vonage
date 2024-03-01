@@ -22,7 +22,7 @@ import SideForm from "../../components/nav/Form.js";
 import SwitchExplore from "../../components/nav/SwitchExplore.js";
 import { createQuestion, getChatHistory, updateFeedback } from "../../services/writebackService.js";
 import { v4 as uuidv4 } from 'uuid'
-
+import { useLocation } from 'react-router-dom';
 import moment from "moment";
 
 const CustomTable = ({
@@ -33,7 +33,8 @@ const CustomTable = ({
   setSelectedRow,
   search,
   setSearch,
-  loading
+  loading,
+  appConfig
 }) => {
 
   const [users1, setUsers1] = useState([]);
@@ -74,9 +75,14 @@ const CustomTable = ({
   };
 
 
+const { extensionSDK } = useContext(ExtensionContext);
+console.log(extensionSDK.lookerHostData.hostUrl)
+
+const baseUrl = extensionSDK.lookerHostData.hostUrl
 
   return (
     <Fragment>
+
 
       <Table className="mt-5 mb-5 pt-5 thisTable">
         <thead>
@@ -136,22 +142,22 @@ const CustomTable = ({
                 {
                   row.look_id == null && row.custom_url_params === '' ? (
 
-                    <td><a class="white" href={`https://looker.bytecode.io/dashboards/${row.dashboard_id}`} target="_blank">{row.name}</a></td>
+                    <td><a class="white" href={`${baseUrl}/dashboards/${row.dashboard_id}`} target="_blank">{row.name}</a></td>
                   )
                     :
                     row.custom_url_params === '' ? (
 
-                      <td><a class="white" href={`https://looker.bytecode.io/looks/${row.look_id}`} target="_blank">{row.name}</a></td>
+                      <td><a class="white" href={`${baseUrl}/looks/${row.look_id}`} target="_blank">{row.name}</a></td>
                     ) : (
 
-                      <td><a class="white" href={`https://looker.bytecode.io${row.custom_url_params}`} target="_blank">{row.name}</a></td>
+                      <td><a class="white" href={`${baseUrl}${row.custom_url_params}`} target="_blank">{row.name}</a></td>
                     )
                 }
 
                 <td>{row.user.first_name}</td>
                 <td>{row.user.last_name}</td>
 
-                <td><a class="white" href={`https://looker.bytecode.io/admin/users/${row.user.id}/edit`} target="_blank">{row.user.display_name}</a></td>
+                <td><a class="white" href={`${baseUrl}/admin/users/${row.user.id}/edit`} target="_blank">{row.user.display_name}</a></td>
 
                 {
                   row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'email' ? (
@@ -567,7 +573,7 @@ function Template1({ description }) {
                           <Form.Group controlId="" class="grayBorder">
                             <Form.Label>EMAIL ADDRESS</Form.Label>
                             <Form.Control
-                            
+
                               value={formData.address}
                               name="address"
                             />

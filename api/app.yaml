@@ -1,4 +1,0 @@
-runtime: nodejs16
-env_variables:
-  SLACK_BOT_TOKEN: "xoxb-17729045376-6473124187255-EgdAfiuXhgO8sCvKB1POoIM9"
-  SLACK_CHANNEL_ID: "express_app_posts"
