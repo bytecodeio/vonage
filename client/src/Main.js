@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Container, Tab, Tabs } from "react-bootstrap";
-import SideForm from "./components/nav/Form.js";
+
 
 import ToTopButton from "./components/ToTopButton.js";
 import NavbarMain from "./components/NavbarMain";
@@ -15,16 +15,7 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import AOS from 'aos';
 import "aos/dist/aos.css";
 
-import {
-  LOOKER_MODEL,
-  LOOKER_EXPLORE,
-  LOOKML_FIELD_TAGS,
-  PRODUCT_MOVEMENT_VIS_DASHBOARD_ID,
-} from "./utils/constants";
 
-
-
-import { sortDateFilterList } from "./utils/globalFunctions";
 
 export const Main = ({ inputValue, setInputValue, url, questions, setQuestions }) => {
 

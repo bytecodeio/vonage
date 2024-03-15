@@ -12,15 +12,9 @@ import { TypingEffect } from "react-typing-text-effect";
 import { TypeAnimation } from "react-type-animation";
 import { motion } from "framer-motion";
 
-import { LOOKER_MODEL, LOOKER_EXPLORE } from "../../utils/constants";
 import { ExtensionContext } from "@looker/extension-sdk-react";
 
-import EmbedQuery from "../../components/EmbedQuery";
 
-import TopNav from "../../components/nav/TopNav.js";
-import SideForm from "../../components/nav/Form.js";
-import SwitchExplore from "../../components/nav/SwitchExplore.js";
-import { createQuestion, getChatHistory, updateFeedback } from "../../services/writebackService.js";
 import { v4 as uuidv4 } from 'uuid'
 import { useLocation } from 'react-router-dom';
 import moment from "moment";
