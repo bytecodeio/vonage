@@ -1,23 +1,12 @@
 import React, { Fragment, useState, useContext, useEffect, useRef } from "react";
-import { Accordion, AccordionButton, AccordionCollapse, AccordionContext, Alert, Anchor, Badge, Breadcrumb, BreadcrumbItem, Button, ButtonGroup, ButtonToolbar, Card, CardGroup, CardImg, Carousel, CarouselItem, CloseButton, Col, Collapse, Container, Dropdown, DropdownButton, Fade, Figure, FloatingLabel, Form, FormCheck, FormControl, FormFloating, FormGroup, FormLabel, FormSelect, FormText, Image, InputGroup, ListGroup, ListGroupItem, Modal, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle, Nav, NavDropdown, NavItem, NavLink, Navbar, NavbarBrand, Offcanvas, OffcanvasBody, OffcanvasHeader, OffcanvasTitle, Overlay, OverlayTrigger, PageItem, Pagination, Placeholder, PlaceholderButton, Popover, PopoverBody, PopoverHeader, ProgressBar, Ratio, Row, SSRProvider, Spinner, SplitButton, Stack, Tab, TabContainer, TabContent, TabPane, Table, Tabs, ThemeProvider, Toast, ToastBody, ToastContainer, ToastHeader, ToggleButton, ToggleButtonGroup, Tooltip } from 'react-bootstrap';
+import { Button, ButtonGroup, CloseButton, Col, Container, Dropdown, Form, FormCheck, FormControl,Image, Modal, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle, Pagination, Row, Spinner, Table, Tabs, ThemeProvider } from 'react-bootstrap';
 import TimePicker from 'react-bootstrap-time-picker';
 
-import AOS from 'aos';
-import "aos/dist/aos.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 
-import { TypingEffect } from "react-typing-text-effect";
-
-import { TypeAnimation } from "react-type-animation";
-import { motion } from "framer-motion";
 
 import { ExtensionContext } from "@looker/extension-sdk-react";
-
-
-import { v4 as uuidv4 } from 'uuid'
-import { useLocation } from 'react-router-dom';
-import moment from "moment";
 
 const CustomTable = ({
   data,
@@ -33,7 +22,6 @@ const CustomTable = ({
 
   const [users1, setUsers1] = useState([]);
   const [last, setLast] = useState(null);
-
 
   useEffect(() => {
     getUsers(data);
@@ -53,7 +41,6 @@ const CustomTable = ({
     } else return user;
   };
 
-
   const bySearch = (user, search) => {
     if (search) {
       return user.name.toLowerCase().includes(search.toLowerCase()) || user.user.last_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,16 +55,11 @@ const CustomTable = ({
       .filter(user => bySearch(user, search));
   };
 
-
 const { extensionSDK } = useContext(ExtensionContext);
-console.log(extensionSDK.lookerHostData.hostUrl)
-
 const baseUrl = extensionSDK.lookerHostData.hostUrl
 
   return (
     <Fragment>
-
-
       <Table className="mt-5 mb-5 pt-5 thisTable">
         <thead>
           <tr>
@@ -101,26 +83,16 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
               {" "}
               <h6>CONTENT TYPE</h6>
             </th>
-            {/*<th>
-              {" "}
-              <h6>NEXT RUN</h6>
-            </th>*/}
+
             <th>
               {" "}
               <h6>RECIPENTS</h6>
             </th>
-            {/*<th>
-              {" "}
-              <h6>HISTORY</h6>
-            </th>*/}
 
             <th>
               {" "}
               <h6>MESSAGE</h6>
             </th>
-
-
-
             <th>
               {" "}
               <h6>EDIT</h6>
@@ -147,7 +119,6 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
                       <td><a class="white" href={`${baseUrl}${row.custom_url_params}`} target="_blank">{row.name}</a></td>
                     )
                 }
-
                 <td>{row.user.first_name}</td>
                 <td>{row.user.last_name}</td>
 
@@ -156,63 +127,52 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
                 {
                   row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'email' ? (
 
+                  <td>PDF attachment via Email</td>
 
-                    <td>PDF attachment via Email</td>
+                ) :
+                  row.scheduled_plan_destination[0].format == 'csv' && row.scheduled_plan_destination[0].type === 's3' ? (
 
+                    <td>CSV file via Amazon S3</td>
                   ) :
-                    row.scheduled_plan_destination[0].format == 'csv' && row.scheduled_plan_destination[0].type === 's3' ? (
 
+                    row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
 
-                      <td>CSV file via Amazon S3</td>
+                      <td>PDF file via Slack</td>
                     ) :
 
+                      row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'email' ? (
 
-                      row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
+                        <td>CSV ZIP file attachment via Email</td>
 
-                        <td>PDF file via Slack</td>
                       ) :
 
-                        row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'email' ? (
+                        row.scheduled_plan_destination[0].format == 'inline_table' && row.scheduled_plan_destination[0].type === 'email' ? (
 
-                          <td>CSV ZIP file attachment via Email</td>
+                          <td>Data Table via Email</td>
 
-                        ) :
+                        ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
 
-                          row.scheduled_plan_destination[0].format == 'inline_table' && row.scheduled_plan_destination[0].type === 'email' ? (
+                          <td>CSV ZIP file file via Slack</td>
 
-                            <td>Data Table via Email</td>
+                        ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
 
-                          ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
+                          <td>CSV ZIP file file via Google Drive</td>
 
-                            <td>CSV ZIP file file via Slack</td>
+                        ) : row.scheduled_plan_destination[0].format == 'wysiwyg_png' && row.scheduled_plan_destination[0].type === 'email' ? (
 
-                          ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
+                          <td>Visualization attachment via Email</td>
 
-                            <td>CSV ZIP file file via Google Drive</td>
+                        ) : row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
 
-                          ) : row.scheduled_plan_destination[0].format == 'wysiwyg_png' && row.scheduled_plan_destination[0].type === 'email' ? (
-
-                            <td>Visualization attachment via Email</td>
-
-                          ) : row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
-
-                            <td>PDF file via Google Drive</td>
-
+                          <td>PDF file via Google Drive</td>
 
                           ) : (
-
                             <td>Other</td>
                           )
-                }
-
-
-                {/*<td>{moment(row.next_run_at).utc().format('YYYY-MM-DD')}</td>*/}
+                   }
 
                 <td>{row.scheduled_plan_destination[0].address}</td>
 
-                {/*<td><a class="white" href={`https://looker.bytecode.io/admin/scheduled_jobs?scheduled_plan_id=${row.scheduled_plan_destination[0].scheduled_plan_id}`} target="_blank">History</a></td>*/}
-
-                {/* <td>{row.scheduled_plan_destination[0].message}</td> */}
                 <td>{
                   !row.enabled || isAllDisabled ? (
                     <p class="paused">Schedule is Paused</p>
@@ -229,14 +189,7 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
                         setSelectedRow(row);
                         console.log(row, "row");
                       }}
-                    // onClick={() => {
-                    //   handleShow;
-                    //   console.log(
-                    //     row,
-                    //     "row"
-                    //     // row.scheduled_plan_destination[0].scheduled_plan_id
-                    //   );
-                    // }}
+
                     ></i>
                   </p>
                 </td>
@@ -256,12 +209,10 @@ function Template1({ description }) {
   const sdk = extensionContext.core40SDK;
   const extensionSDK = extensionContext.extensionSDK;
   const { hostUrl } = extensionContext.extensionSDK.lookerHostData;
-  const [apps, setApps] = useState([]);
-  const [allApps, setAllApps] = useState([]);
-  const [selectedButton, setSelectedButton] = useState("grid");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [slide, setSlide] = React.useState();
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -364,68 +315,64 @@ function Template1({ description }) {
       extensionSDK.saveContextData({ data: newData, cols: data.cols });
       setData({ data: newData, cols: data.cols });
 
-      // setStatus({ type: 'success' });
-
       handleClose();
       setLoading(false);
-      // setTimeout(() => {
-      //   setStatus(undefined);
-      // }, 5000);
+
     }
     else {
 
-      // setStatus({ type: 'error', error });
       setLoading(false);
-      // setTimeout(() => {
-      //   setStatus(undefined);
-      // }, 5000);
 
     }
   };
 
+  const callSDKFuncs = async (is_all_users) => {
+
+    const res = await sdk.ok(sdk.all_scheduled_plans(is_all_users))
+
+    const usersContextData = extensionSDK.getContextData() || null
+
+    if(!usersContextData) {
+      const cols = res?.length ? Object.keys(res[0]).map((i) => i) : null
+      extensionSDK.saveContextData({ data: res, cols })
+      setData({ data: res, cols });
+      setLoading(false);
+    }
+    else {
+      let contextData = usersContextData?.data
+      let temp = res
+      for (const schedule of contextData) {
+        let is_available = false
+        for (const data of res) {
+          if (schedule.id == data.id) {
+            is_available = true
+            break
+          }
+        }
+
+        if(!is_available) {
+          try{
+            let response = await sdk.ok(sdk.scheduled_plan(schedule.id))
+            if(response.id == schedule.id) temp.push(schedule)
+          } catch(err) {
+            console.log(err)
+          }
+        }
+      }
+      temp.sort((a, b) => a.id - b.id);
+
+      const cols = Object.keys(res[0]).map((i) => i)
+      extensionSDK.saveContextData({ data: temp, cols })
+      setData({ data: temp, cols })
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     setLoading(true);
-    sdk
-      .ok(
-        sdk.all_scheduled_plans({
-          all_users: true,
-        })
-      )
-      .then((res) => {
-
-        console.log(res, "All of scheduler info");
-
-        const usersContextData = extensionSDK.getContextData() || null;
-
-        // SAVE DATA IN EXTENSION USERS CONTEXT IF NOT ALREADY SAVED
-        if (!usersContextData) {
-          const cols = Object.keys(res[0]).map((i) => i);
-          extensionSDK.saveContextData({ data: res, cols });
-          setData({ data: res, cols });
-          setLoading(false);
-        } else {
-          // CHECK IF DATA LENGTH HAS CHANGED AND PREVIOUS DATA IS LESS THAN NEW DATA LENGTH SO THAT WE CAN UPDATE EXTENSION USERS CONTEXT WITH NEW DATA
-          if (usersContextData?.data?.length !== res?.length && usersContextData?.data?.length < res?.length) {
-            const cols = Object.keys(res[0]).map((i) => i);
-            extensionSDK.saveContextData({ data: res, cols });
-            setData({ data: res, cols });
-            setLoading(false);
-          }
-          // IF DATA LENGTH HAS NOT CHANGED THEN WE CAN USE THE DATA FROM EXTENSION USERS CONTEXT
-          else {
-            setLoading(false);
-            setData(usersContextData);
-          }
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
+    callSDKFuncs(true);
   }, []);
 
-  //search
 
   const handleTogglePauseAll = async () => {
     setLoading(true);
@@ -448,12 +395,6 @@ function Template1({ description }) {
   return (
     <Fragment>
 
-      {status?.type === 'success' && <div class="successMessage"><p><i class="far fa-check"></i> Update Saved! Please refresh the app to see your changes.</p></div>}
-
-      {status?.type === 'error' && (
-        <div class="errorMessage"><p><i class="fas fa-exclamation-circle redInfo"></i> Update not saved!</p></div>
-      )}
-
       <Container fluid>
         <h2 class="intro-title text-center mb-5 pb-0">Report Scheduler</h2>
         <div className="position-relative fancy-short-banner-five">
@@ -472,9 +413,7 @@ function Template1({ description }) {
                     class="col-lg-4 text-center text-lg-end aos-init aos-animate"
                     data-aos="fade-left"
                   >
-                    {/*<a class="msg-btn tran3s">
-                    new scheduled report
-                  </a>*/}
+
                     <div className="position-relative">
                       <input onChange={e => setSearch(e.target.value)} placeholder="Search Report Name or Last Name" type="search" class="form-control" />
                       <i class="far fa-search absoluteSearch"></i>
@@ -585,19 +524,6 @@ function Template1({ description }) {
                           </Form.Group>
                         </Col>
 
-
-                        {/*<Col xs={12} md={9}>
-                          <Form.Group className="mb-3">
-                            <Form.Label>Message</Form.Label>
-                            <Form.Control
-                              onChange={handleChange}
-                              as="textarea"
-                              rows={3}
-                              name="message"
-                              value={formData.message}
-                            />
-                          </Form.Group>
-                        </Col>*/}
                         <Col xs={12} md={3}>
                           <Form.Check
                             onClick={handleDisabled}
