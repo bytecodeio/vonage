@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useContext, useEffect, useRef } from "react";
-import { Button, ButtonGroup, CloseButton, Col, Container, Dropdown, Form, FormCheck, FormControl,Image, Modal, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle, Pagination, Row, Spinner, Table, Tabs, ThemeProvider } from 'react-bootstrap';
+import { Button, Col, Container, Dropdown, Form, FormCheck, FormControl, Image, Modal, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle, Row, Spinner, Table, ThemeProvider } from 'react-bootstrap';
 import TimePicker from 'react-bootstrap-time-picker';
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -29,7 +29,6 @@ const CustomTable = ({
 
   const isAllDisabled = data?.data && data.data?.every((row) => row.enabled === false);
 
-  //Simulating making api call with useEffect
   const getUsers = data => {
     setUsers1(data);
   };
@@ -146,29 +145,29 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
 
                       ) :
 
-                        row.scheduled_plan_destination[0].format == 'inline_table' && row.scheduled_plan_destination[0].type === 'email' ? (
+                      row.scheduled_plan_destination[0].format == 'inline_table' && row.scheduled_plan_destination[0].type === 'email' ? (
 
-                          <td>Data Table via Email</td>
+                        <td>Data Table via Email</td>
 
-                        ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
+                      ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
 
-                          <td>CSV ZIP file file via Slack</td>
+                        <td>CSV ZIP file file via Slack</td>
 
-                        ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
+                      ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
 
-                          <td>CSV ZIP file file via Google Drive</td>
+                        <td>CSV ZIP file file via Google Drive</td>
 
-                        ) : row.scheduled_plan_destination[0].format == 'wysiwyg_png' && row.scheduled_plan_destination[0].type === 'email' ? (
+                      ) : row.scheduled_plan_destination[0].format == 'wysiwyg_png' && row.scheduled_plan_destination[0].type === 'email' ? (
 
-                          <td>Visualization attachment via Email</td>
+                        <td>Visualization attachment via Email</td>
 
-                        ) : row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
+                      ) : row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
 
-                          <td>PDF file via Google Drive</td>
+                        <td>PDF file via Google Drive</td>
 
                           ) : (
                             <td>Other</td>
-                          )
+                      )
                    }
 
                 <td>{row.scheduled_plan_destination[0].address}</td>
@@ -197,7 +196,6 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
             );
           })}
         </tbody>
-
       </Table>
     </Fragment>
   );
@@ -209,14 +207,11 @@ function Template1({ description }) {
   const sdk = extensionContext.core40SDK;
   const extensionSDK = extensionContext.extensionSDK;
   const { hostUrl } = extensionContext.extensionSDK.lookerHostData;
-
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
   const [data, setData] = useState({ cols: null, data: null });
   const [selectedRow, setSelectedRow] = useState();
   const [search, setSearch] = useState(null);
@@ -241,7 +236,6 @@ function Template1({ description }) {
       [event.target.name]: event.target.value,
     });
   };
-
 
   const handleDisabled = () => {
     setFormData({
@@ -314,7 +308,6 @@ function Template1({ description }) {
 
       extensionSDK.saveContextData({ data: newData, cols: data.cols });
       setData({ data: newData, cols: data.cols });
-
       handleClose();
       setLoading(false);
 
@@ -420,7 +413,6 @@ function Template1({ description }) {
                     </div>
 
                   </div>
-
                   <div
                     class="col-lg-3 all">
                     {
@@ -443,7 +435,6 @@ function Template1({ description }) {
 
                 <div className="dashboard-content">
 
-
                   {data.data && (
                     <CustomTable
                       data={data.data}
@@ -462,7 +453,6 @@ function Template1({ description }) {
             </div>
           </Container>
 
-
         </div>
 
         <Modal show={show} onHide={handleClose}>
@@ -478,7 +468,6 @@ function Template1({ description }) {
                     <div className="cardForm">
                       <Row>
                         <h4 class="mb-3">Update Schedules</h4>
-
 
                         <Col xs={12} md={6}>
                           <Form.Group controlId="" class="grayBorder">
