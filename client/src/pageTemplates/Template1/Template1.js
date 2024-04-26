@@ -321,8 +321,9 @@ function Template1({ description }) {
 
   const callSDKFuncs = async (is_all_users) => {
 
-    const res = await sdk.ok(sdk.all_scheduled_plans(is_all_users))
-
+    const res = await sdk.ok(sdk.all_scheduled_plans({
+      all_users: true
+    }))
     const usersContextData = extensionSDK.getContextData() || null
 
     if(!usersContextData) {
