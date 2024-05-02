@@ -1041,7 +1041,7 @@ button.scroll-top {
 
 
 .modal-dialog {
-  max-width: 85%;
+  max-width: 55%;
   margin: 1.75rem auto;
 }
 .modal{
@@ -1295,4 +1295,9 @@ table p:hover i{
 
 .modal-backdrop{
   z-index: 9;
+}
+
+.dashboard-content{
+  height: 400px;
+  overflow: auto scroll;
 }

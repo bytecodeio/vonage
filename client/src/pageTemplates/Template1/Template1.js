@@ -35,15 +35,14 @@ const CustomTable = ({
 
   const bylast = (user, last) => {
     if (last) {
-      return user.last_name.toLowerCase().includes(search.toLowerCase());
+      return user.id.toLowerCase().includes(search.toLowerCase());
 
     } else return user;
   };
 
   const bySearch = (user, search) => {
     if (search) {
-      return user.name.toLowerCase().includes(search.toLowerCase()) || user.user.last_name.toLowerCase().includes(search.toLowerCase()) ||
-        user.user.first_name.toLowerCase().includes(search.toLowerCase());
+      return user.id.toLowerCase().includes(search.toLowerCase())
 
     } else return user;
   };
@@ -59,33 +58,11 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
 
   return (
     <Fragment>
-      <Table className="mt-5 mb-5 pt-5 thisTable">
+      <Table className="mb-5 thisTable">
         <thead>
           <tr>
             <th>
-              <h6>REPORT NAME</h6>
-            </th>
-
-            <th>
-              <h6>FIRST NAME</h6>
-            </th>
-            <th>
-              {" "}
-              <h6>LAST NAME</h6>
-            </th>
-            <th>
-              {" "}
-              <h6>OWNER</h6>
-            </th>
-
-            <th>
-              {" "}
-              <h6>CONTENT TYPE</h6>
-            </th>
-
-            <th>
-              {" "}
-              <h6>RECIPENTS</h6>
+              <h6>Schedule id</h6>
             </th>
 
             <th>
@@ -104,73 +81,7 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
           {filteredList(users1, last, search).map((row, i) => {
             return (
               <tr key={row.id}>
-                {
-                  row.look_id == null && row.custom_url_params === '' ? (
-
-                    <td><a class="white" href={`${baseUrl}/dashboards/${row.dashboard_id}`} target="_blank">{row.name}</a></td>
-                  )
-                    :
-                    row.custom_url_params === '' ? (
-
-                      <td><a class="white" href={`${baseUrl}/looks/${row.look_id}`} target="_blank">{row.name}</a></td>
-                    ) : (
-
-                      <td><a class="white" href={`${baseUrl}${row.custom_url_params}`} target="_blank">{row.name}</a></td>
-                    )
-                }
-                <td>{row.user.first_name}</td>
-                <td>{row.user.last_name}</td>
-
-                <td><a class="white" href={`${baseUrl}/admin/users/${row.user.id}/edit`} target="_blank">{row.user.display_name}</a></td>
-
-                {
-                  row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'email' ? (
-
-                  <td>PDF attachment via Email</td>
-
-                ) :
-                  row.scheduled_plan_destination[0].format == 'csv' && row.scheduled_plan_destination[0].type === 's3' ? (
-
-                    <td>CSV file via Amazon S3</td>
-                  ) :
-
-                    row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
-
-                      <td>PDF file via Slack</td>
-                    ) :
-
-                      row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'email' ? (
-
-                        <td>CSV ZIP file attachment via Email</td>
-
-                      ) :
-
-                      row.scheduled_plan_destination[0].format == 'inline_table' && row.scheduled_plan_destination[0].type === 'email' ? (
-
-                        <td>Data Table via Email</td>
-
-                      ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::slack_app' ? (
-
-                        <td>CSV ZIP file file via Slack</td>
-
-                      ) : row.scheduled_plan_destination[0].format == 'csv_zip' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
-
-                        <td>CSV ZIP file file via Google Drive</td>
-
-                      ) : row.scheduled_plan_destination[0].format == 'wysiwyg_png' && row.scheduled_plan_destination[0].type === 'email' ? (
-
-                        <td>Visualization attachment via Email</td>
-
-                      ) : row.scheduled_plan_destination[0].format == 'wysiwyg_pdf' && row.scheduled_plan_destination[0].type === 'looker-integration://1::google_drive' ? (
-
-                        <td>PDF file via Google Drive</td>
-
-                          ) : (
-                            <td>Other</td>
-                      )
-                   }
-
-                <td>{row.scheduled_plan_destination[0].address}</td>
+                <td>{row.id}</td>
 
                 <td>{
                   !row.enabled || isAllDisabled ? (
@@ -179,6 +90,7 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
                     <p class="active">Schedule is Active</p>
                   )
                 }</td>
+
                 <td>
                   <p>
                     <i
@@ -218,12 +130,7 @@ function Template1({ description }) {
   const [status, setStatus] = useState(undefined);
 
   const [formData, setFormData] = useState({
-    scheduleName: "",
-    firstName: "",
-    lastName: "",
-    contentType: "",
-    address: "",
-    message: "",
+    id: 0,
     enabled: false,
   });
 
@@ -252,12 +159,7 @@ function Template1({ description }) {
 
     if (selectedRow) {
       setFormData({
-        scheduleName: selectedRow.name || "",
-        firstName: selectedRow.user.first_name || "",
-        lastName: selectedRow.user.last_name || "",
-        contentType: selectedRow.scheduled_plan_destination[0].format || "",
-        address: selectedRow.scheduled_plan_destination[0].address || "",
-        message: selectedRow.scheduled_plan_destination[0].message || "",
+        id: selectedRow.id || 0,
         enabled: selectedRow.enabled || false
       });
     }
@@ -268,35 +170,15 @@ function Template1({ description }) {
     setLoading(true);
     let response = await sdk.ok(
       sdk.update_scheduled_plan(
-        selectedRow?.scheduled_plan_destination[0].scheduled_plan_id,
+        selectedRow?.id,
         {
           ...selectedRow,
-          scheduled_plan_destination: [
-            {
-              ...selectedRow.scheduled_plan_destination[0],
-              address: formData.address,
-              message: formData.message,
-            },
-          ],
-          user: {
-            ...selectedRow.user,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-          },
-
           enabled: formData.enabled,
-
-          res: {
-            ...selectedRow,
-            scheduleName: formData.scheduleName,
-          },
         }
       )
     );
 
     if (response) {
-      console.log(response, "response");
-
       const newData = data?.data?.map((row) => {
         if (row.id === selectedRow.id) {
           return {
@@ -321,13 +203,16 @@ function Template1({ description }) {
 
   const callSDKFuncs = async (is_all_users) => {
 
-    const res = await sdk.ok(sdk.all_scheduled_plans({
-      all_users: true
-    }))
-    const usersContextData = extensionSDK.getContextData() || null
+    const cols = ['id', 'enabled']
 
-    if(!usersContextData) {
-      const cols = res?.length ? Object.keys(res[0]).map((i) => i) : null
+    const res = await sdk.ok(sdk.all_scheduled_plans({
+      fields: 'id, enabled',
+      all_users: is_all_users
+    }))
+
+    const usersContextData = extensionSDK.getContextData()
+
+    if(!usersContextData.data) {
       extensionSDK.saveContextData({ data: res, cols })
       setData({ data: res, cols });
       setLoading(false);
@@ -335,27 +220,40 @@ function Template1({ description }) {
     else {
       let contextData = usersContextData?.data
       let temp = res
-      for (const schedule of contextData) {
-        let is_available = false
-        for (const data of res) {
-          if (schedule.id == data.id) {
-            is_available = true
-            break
-          }
-        }
 
-        if(!is_available) {
-          try{
-            let response = await sdk.ok(sdk.scheduled_plan(schedule.id))
-            if(response.id == schedule.id) temp.push(schedule)
-          } catch(err) {
-            console.log(err)
+      const batchSize = 50;
+      const batches = Math.ceil(contextData.length / batchSize);
+
+      for (let i = 0; i < batches; i++) {
+        const start = i * batchSize;
+        const end = Math.min((i + 1) * batchSize, contextData.length);
+        const batch = contextData.slice(start, end);
+        await Promise.all(batch.map(async (schedule) => {
+          let is_available = false
+          for (const data of temp) {
+            if (schedule.id == data.id) {
+              is_available = true
+              break
+            }
           }
-        }
+
+          if(!is_available) {
+            try{
+              let response = await sdk.ok(sdk.scheduled_plan(schedule?.id, 'id, enabled'))
+              if(response.id == schedule.id) temp.push(response)
+            } catch(err) {
+              console.log("getting schedule failed", schedule?.id)
+              console.log(err)
+            }
+          }
+        }));
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
+
       temp.sort((a, b) => a.id - b.id);
 
-      const cols = Object.keys(res[0]).map((i) => i)
+      const cols = ['id', 'enabled']
       extensionSDK.saveContextData({ data: temp, cols })
       setData({ data: temp, cols })
       setLoading(false)
@@ -367,19 +265,39 @@ function Template1({ description }) {
     callSDKFuncs(true);
   }, []);
 
-
   const handleTogglePauseAll = async () => {
     setLoading(true);
-    const updatedUsers = await Promise.all(
-      data.data.map(async (row) => {
-        return sdk.ok(sdk.update_scheduled_plan(row.scheduled_plan_destination[0].scheduled_plan_id, { enabled: !isAnyEnabled }));
-      })
-    )
-    const usersContextData = extensionSDK.getContextData() || null;
+    const batchSize = 50;
+    const batches = Math.ceil(data.data.length / batchSize);
 
-    if (usersContextData && updatedUsers && updatedUsers.length > 0) {
-      extensionSDK.saveContextData({ data: updatedUsers, cols: data.cols });
-      setData({ data: updatedUsers, cols: data.cols });
+    for (let i = 0; i < batches; i++) {
+      const start = i * batchSize;
+      const end = Math.min((i + 1) * batchSize, data.data.length);
+      const batch = data.data.slice(start, end);
+      await Promise.all(batch.map(async (row) => {
+        if( row.enabled == isAnyEnabled ) {
+          try{
+            return await sdk.ok(sdk.update_scheduled_plan(row.id, { enabled: !isAnyEnabled }));
+          }
+          catch(e) {
+            console.log(e)
+          }
+        }
+      }));
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    let updatedUsers = data.data.map(item => ({
+      id: item.id,
+      enabled: !isAnyEnabled,
+    }));
+
+    const usersContextData = extensionSDK.getContextData() || null;
+    const cols = ['id', 'enabled']
+
+    if (usersContextData.data && updatedUsers && updatedUsers.length > 0) {
+      extensionSDK.saveContextData({ data: updatedUsers, cols });
+      setData({ data: updatedUsers, cols });
       setLoading(false);
     }
     setSelectedRow(null);
@@ -409,7 +327,7 @@ function Template1({ description }) {
                   >
 
                     <div className="position-relative">
-                      <input onChange={e => setSearch(e.target.value)} placeholder="Search Report Name or Last Name" type="search" class="form-control" />
+                      <input onChange={e => setSearch(e.target.value)} placeholder="Search Report by ID" type="search" class="form-control" />
                       <i class="far fa-search absoluteSearch"></i>
                     </div>
 
@@ -463,58 +381,26 @@ function Template1({ description }) {
               <Modal.Title></Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <Row className="mt-3">
+              <Row className="mt-3 mb-5">
                 <Col xs={12} md={12}>
                   <Form>
                     <div className="cardForm">
                       <Row>
-                        <h4 class="mb-3">Update Schedules</h4>
+                        <h4 class="mb-3">Update Single Schedule by ID</h4>
 
-                        <Col xs={12} md={6}>
+
+                        <Col xs={12} md={12}>
                           <Form.Group controlId="" class="grayBorder">
-                            <Form.Label>SCHEDULER FIRST NAME</Form.Label>
+                            <Form.Label>SCHEDULE ID</Form.Label>
                             <Form.Control
 
-                              value={formData.firstName}
-                              name="firstName"
-                            />
-                          </Form.Group>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                          <Form.Group controlId="" class="grayBorder">
-                            <Form.Label>SCHEDULER LAST NAME</Form.Label>
-                            <Form.Control
-
-                              value={formData.lastName}
-                              name="lastName"
-                            />
-                          </Form.Group>
-                        </Col>
-
-                        <Col xs={12} lg={6} md={12}>
-                          <Form.Group controlId="" class="grayBorder">
-                            <Form.Label>EMAIL ADDRESS</Form.Label>
-                            <Form.Control
-
-                              value={formData.address}
-                              name="address"
-                            />
-                          </Form.Group>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                          <Form.Group controlId="" class="grayBorder">
-                            <Form.Label>SCHEDULE NAME</Form.Label>
-                            <Form.Control
-
-                              value={formData.scheduleName}
+                              value={formData.id}
                               name="scheduleName"
                             />
                           </Form.Group>
                         </Col>
 
-                        <Col xs={12} md={3}>
+                        <Col xs={12} md={12}>
                           <Form.Check
                             onClick={handleDisabled}
                             disabled={!isAnyEnabled ? true : false}
