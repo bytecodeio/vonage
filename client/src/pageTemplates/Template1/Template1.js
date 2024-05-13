@@ -42,7 +42,7 @@ const CustomTable = ({
 
   const bySearch = (user, search) => {
     if (search) {
-      return user.id.toLowerCase().includes(search.toLowerCase())
+      return user.id.toLowerCase().includes(search.toLowerCase()) || user.name.toLowerCase().includes(search.toLowerCase())
 
     } else return user;
   };
@@ -61,9 +61,18 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
       <Table className="mb-5 thisTable">
         <thead>
           <tr>
+
+
             <th>
-              <h6>Schedule id</h6>
+              <h6>ID</h6>
             </th>
+
+            <th>
+             <h6>REPORT NAME</h6>
+           </th>
+           <th>
+            <h6>EMAIL</h6>
+          </th>
 
             <th>
               {" "}
@@ -82,6 +91,12 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
             return (
               <tr key={row.id}>
                 <td>{row.id}</td>
+
+
+               <td>{row.name}</td>
+
+
+                <td>{row.scheduled_plan_destination[0].address}</td>
 
                 <td>{
                   !row.enabled || isAllDisabled ? (
@@ -203,10 +218,10 @@ function Template1({ description }) {
 
   const callSDKFuncs = async (is_all_users) => {
 
-    const cols = ['id', 'enabled']
+    const cols = ['id', 'enabled', 'name', 'scheduled_plan_destination']
 
     const res = await sdk.ok(sdk.all_scheduled_plans({
-      fields: 'id, enabled',
+      fields: 'id, enabled, name, scheduled_plan_destination',
       all_users: is_all_users
     }))
 
@@ -327,7 +342,7 @@ function Template1({ description }) {
                   >
 
                     <div className="position-relative">
-                      <input onChange={e => setSearch(e.target.value)} placeholder="Search Report by ID" type="search" class="form-control" />
+                      <input onChange={e => setSearch(e.target.value)} placeholder="Search Report by ID or Name" type="search" class="form-control" />
                       <i class="far fa-search absoluteSearch"></i>
                     </div>
 
@@ -399,6 +414,8 @@ function Template1({ description }) {
                             />
                           </Form.Group>
                         </Col>
+
+
 
                         <Col xs={12} md={12}>
                           <Form.Check
