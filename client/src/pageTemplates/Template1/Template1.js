@@ -27,7 +27,11 @@ const CustomTable = ({
     getUsers(data);
   }, [data]);
 
+
+
   const isAllDisabled = data?.data && data.data?.every((row) => row.enabled === false);
+
+
 
   const getUsers = data => {
     setUsers1(data);
@@ -42,7 +46,7 @@ const CustomTable = ({
 
   const bySearch = (user, search) => {
     if (search) {
-      return user.id.toLowerCase().includes(search.toLowerCase()) || user.name.toLowerCase().includes(search.toLowerCase())
+      return user.id?.toLowerCase().includes(search.toLowerCase()) || user.name?.toLowerCase().includes(search.toLowerCase())
 
     } else return user;
   };
@@ -93,10 +97,12 @@ const baseUrl = extensionSDK.lookerHostData.hostUrl
                 <td>{row.id}</td>
 
 
-               <td>{row.name}</td>
+               <td>{row?.name}</td>
 
+               <td>{row.scheduled_plan_destination?.[0].address}</td>
+              {/*<td>{row.scheduled_plan_destination?.[0]?.address}</td>*/}
 
-                <td>{row.scheduled_plan_destination[0].address}</td>
+              
 
                 <td>{
                   !row.enabled || isAllDisabled ? (
@@ -146,8 +152,11 @@ function Template1({ description }) {
 
   const [formData, setFormData] = useState({
     id: 0,
+    name:"elizabeth",
     enabled: false,
   });
+
+
 
   const isAllEnabled = data?.data && data.data?.every((row) => row.enabled === true);
   const isAnyEnabled = data?.data && data.data?.some((row) => row.enabled === true);
@@ -175,6 +184,7 @@ function Template1({ description }) {
     if (selectedRow) {
       setFormData({
         id: selectedRow.id || 0,
+        name: selectedRow.name,
         enabled: selectedRow.enabled || false
       });
     }
@@ -218,18 +228,20 @@ function Template1({ description }) {
 
   const callSDKFuncs = async (is_all_users) => {
 
-    const cols = ['id', 'enabled', 'name', 'scheduled_plan_destination']
+    // const cols = ['id', 'enabled', 'name', 'scheduled_plan_destination']
 
     const res = await sdk.ok(sdk.all_scheduled_plans({
-      fields: 'id, enabled, name, scheduled_plan_destination',
+      // fields: 'id, enabled, name, scheduled_plan_destination',
       all_users: is_all_users
     }))
+
+    console.log(res, "response to look at")
 
     const usersContextData = extensionSDK.getContextData()
 
     if(!usersContextData.data) {
-      extensionSDK.saveContextData({ data: res, cols })
-      setData({ data: res, cols });
+      extensionSDK.saveContextData({ data: res })
+      setData({ data: res });
       setLoading(false);
     }
     else {
@@ -404,16 +416,30 @@ function Template1({ description }) {
                         <h4 class="mb-3">Update Single Schedule by ID</h4>
 
 
-                        <Col xs={12} md={12}>
+                        <Col xs={12} md={9}>
                           <Form.Group controlId="" class="grayBorder">
-                            <Form.Label>SCHEDULE ID</Form.Label>
+                            <Form.Label>SCHEDULE NAME</Form.Label>
                             <Form.Control
 
-                              value={formData.id}
+                              value={formData.name}
                               name="scheduleName"
                             />
                           </Form.Group>
                         </Col>
+
+
+
+                      <Col xs={12} md={3}>
+                        <Form.Group controlId="" class="grayBorder">
+                        <Form.Label>SCHEDULE ID</Form.Label>
+                        <Form.Control
+
+                        value={formData.id}
+                        name="scheduleName"
+                        />
+                        </Form.Group>
+                      </Col>
+
 
 
 
